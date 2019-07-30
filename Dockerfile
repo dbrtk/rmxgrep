@@ -6,9 +6,10 @@ RUN apk update && apk add grep
 RUN addgroup -S rmxuser && adduser -S rmxuser -G rmxuser
 
 # creating a directory that will hold data
-RUN mkdir -p /data/corpus \
-	&& chown -R rmxuser:rmxuser /data
+# RUN mkdir -p /data/corpus
+#	&& chown -R rmxuser:rmxuser /data
 
+# VOLUME /data
 
 WORKDIR /app
 COPY . /app/.
