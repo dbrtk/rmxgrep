@@ -38,14 +38,17 @@ def context_to_json(string: str = None):
     return out
 
 
-def words_context(lemma: list = None, path: str = None):
+def words_context(words: list = None, path: str = None):
+
+    if not os.path.isdir(path):
+        raise ValueError(path)
 
     try:
         results = subprocess.run(
             shlex.split("sh {} {} {}".format(
                 SEARCH_CORPUS_SH,
                 path,
-                '|'.join(lemma)
+                '|'.join(words)
             )),
             encoding="utf-8",
             capture_output=True,
@@ -63,17 +66,16 @@ def search_corpus():
     """
     :return: http response that contains a json object
     """
-    payload = request.get_json()
-    corpus_path = payload.get('corpus_path')
-    lemma = payload.get('lemma')
+    corpus_path = request.args.get('corpus_path')
+    words = request.args.getlist('words')
 
     if not corpus_path:
         abort(500, "a path to the corpus is required")
-    if lemma is None:
+    if words is None:
         abort(500, "a search string is required")
 
-    result = words_context(lemma=lemma, path=corpus_path)
-    result = tag_words_corpus(lemma, result)
+    result = words_context(words=words, path=corpus_path)
+    result = tag_words_corpus(words, result)
     data = context_to_json(result)
 
     return jsonify({
