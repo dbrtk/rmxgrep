@@ -16,4 +16,4 @@ ENV SEARCH_CORPUS_SH '/opt/rmxgrep/search_corpus.sh'
 # install python dependencies
 RUN pip install -U pip && pip install -r requirements.txt
 
-EXPOSE 8004
+EXPOSE 8005
