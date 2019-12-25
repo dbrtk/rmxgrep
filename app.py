@@ -67,6 +67,7 @@ def search_corpus():
     :return: http response that contains a json object
     """
     corpus_path = request.args.get('corpus_path')
+    highlight_words = request.args.get('highlight', False)
     words = request.args.getlist('words')
 
     if not corpus_path:
@@ -75,7 +76,8 @@ def search_corpus():
         abort(500, "a search string is required")
 
     result = words_context(words=words, path=corpus_path)
-    result = tag_words_corpus(words, result)
+    if highlight_words:
+        result = tag_words_corpus(words, result)
     data = context_to_json(result)
 
     return jsonify({
