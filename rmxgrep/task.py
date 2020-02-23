@@ -61,21 +61,21 @@ def words_context(words: list = None, path: str = None):
 
 @celery.task
 def search_text(container_path: str = None,
-                highlight_words: bool = False,
+                highlight: bool = False,
                 words: list = None) -> dict:
     """
     :return: http response that contains a json object
     """
 
     result = words_context(words=words, path=container_path)
-    if highlight_words:
+    if highlight:
         result = tag_words(words, result)
     data = context_to_json(result)
 
     return {
         'success': True,
         'container_path': container_path,
-        'highlight_words': highlight_words,
+        'highlight': highlight,
         'words': words,
         'data': data
     }
