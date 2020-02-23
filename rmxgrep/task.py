@@ -1,16 +1,14 @@
+
 import os
 import re
 import shlex
 import subprocess
 
-from flask import abort, Flask, jsonify, request
-
-app = Flask(__name__)
-
-SEARCH_CORPUS_SH = os.environ.get('SEARCH_CORPUS_SH')
+from .app import celery
+from .conf import SEARCH_TEXT_SH
 
 
-def tag_words_corpus(matchwords: list = None, txt: str = None):
+def tag_words(matchwords: list = None, txt: str = None):
 
     return re.sub(
         r"\b({})\b".format('|'.join(matchwords)),
@@ -46,7 +44,7 @@ def words_context(words: list = None, path: str = None):
     try:
         results = subprocess.run(
             shlex.split("sh {} {} {}".format(
-                SEARCH_CORPUS_SH,
+                SEARCH_TEXT_SH,
                 path,
                 '|'.join(words)
             )),
@@ -61,26 +59,23 @@ def words_context(words: list = None, path: str = None):
     return results.stdout
 
 
-@app.route("/", methods=['GET', ])
-def search_corpus():
+@celery.task
+def search_text(container_path: str = None,
+                highlight_words: bool = False,
+                words: list = None) -> dict:
     """
     :return: http response that contains a json object
     """
-    corpus_path = request.args.get('corpus_path')
-    highlight_words = request.args.get('highlight', False)
-    words = request.args.getlist('words')
 
-    if not corpus_path:
-        abort(500, "a path to the corpus is required")
-    if words is None:
-        abort(500, "a search string is required")
-
-    result = words_context(words=words, path=corpus_path)
+    result = words_context(words=words, path=container_path)
     if highlight_words:
-        result = tag_words_corpus(words, result)
+        result = tag_words(words, result)
     data = context_to_json(result)
 
-    return jsonify({
+    return {
         'success': True,
+        'container_path': container_path,
+        'highlight_words': highlight_words,
+        'words': words,
         'data': data
-    })
+    }
