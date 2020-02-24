@@ -12,3 +12,7 @@ CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+CELERY_ROUTES = {
+
+    'rmxgrep.task.*': {'queue': 'rmxgrep'}
+}
