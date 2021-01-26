@@ -1,6 +1,6 @@
 FROM python:alpine
 
-RUN apk update && apk add grep
+RUN apk update && apk add grep git
 
 COPY . /app/.
 
@@ -15,7 +15,10 @@ RUN chmod +x /opt/rmxgrep/search_corpus.sh && chmod +x /app/run.sh
 ENV SEARCH_CORPUS_SH "/opt/rmxgrep/search_corpus.sh"
 
 # install python dependencies
-RUN pip install -U pip && pip install -r requirements.txt
+RUN python -m pip install -U pip
+RUN python -m pip install -r requirements.txt
+
+RUN apk del git
 
 # creating a directory that will contain nltk_data
 RUN mkdir /data

@@ -1,2 +1,2 @@
 celery
-redis
+pymongo
