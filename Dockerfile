@@ -1,5 +1,9 @@
 FROM python:alpine
 
+
+# Creating a user tu run the process
+# RUN groupadd -r rmxgrepuser && useradd -r -g rmxgrepuser rmxgrepuser
+
 RUN apk update && apk add grep git
 
 COPY . /app/.
