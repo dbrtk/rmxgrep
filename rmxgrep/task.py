@@ -23,15 +23,11 @@ def context_to_json(string: str = None):
     pattern = r"([a-z0-9]+)\:(.*)"
     data = re.findall(pattern, string)
 
-    out = {}
-    for docid, txt in data:
-
-        if docid not in out:
-            out[docid] = []
-        else:
-            if txt in out[docid]:
-                continue
-        out[docid].append(txt)
+    out = []
+    for dataid, text in data:
+        obj = {'dataid': dataid, 'text': text}
+        if obj not in out:
+            out.append(obj)
 
     return out
 
